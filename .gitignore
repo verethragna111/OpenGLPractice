@@ -1,0 +1,82 @@
+# Ignore object files
+*.o
+*.obj
+
+# Ignore compiled and linked libraries
+*.a
+*.lib
+*.dll
+*.so
+
+# Ignore executable files
+*.exe
+
+# Ignore IDE specific files
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.opendb
+*.VC.db
+*.VC.opendb
+*.VC.VC.opendb
+*.VC.db-shm
+*.VC.db-wal
+*.VC.VC.db-shm
+*.VC.VC.db-wal
+*.VC.opendb-shm
+*.VC.opendb-wal
+*.VC.VC.opendb-shm
+*.VC.VC.opendb-wal
+.vs/
+.ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.db
+*.VC.opendb
+*.VC.VC.opendb
+
+# Ignore build directories
+Debug/
+Release/
+x64/
+x86/
+build/
+dist/
+
+# Ignore log files
+*.log
+
+# Ignore Autotools files
+autom4te.cache/
+configure
+Makefile.in
+aclocal.m4
+config.status
+libtool
+stamp-h1
+config.log
+config.h
+*.lo
+*.la
+deps/
+*.dirstamp
+*.deps
+
+# Ignore CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+install_manifest.txt
+CTestTestfile.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+_CPack_Packages/
+DartConfiguration.tcl
+CTestTestfile.cmake
+CTestCustom.cmake
