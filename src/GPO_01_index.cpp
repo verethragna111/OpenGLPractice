@@ -44,6 +44,8 @@ void main()
 GLFWwindow* window;
 GLuint prog;
 objeto triangulo;
+objeto cuadrado;
+objeto hexagono;
 
 objeto crear_triangulo(void)
 {
@@ -71,6 +73,21 @@ objeto crear_triangulo(void)
     glBufferData(GL_ARRAY_BUFFER, sizeof(color_data), color_data, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    // Creo y enlazo el VAO
+    glGenVertexArrays(1, &VAO);	glBindVertexArray(VAO);
+
+    // Indico donde hallar datos de posiciones dentro del VBO correspondiente
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_pos);
+    glEnableVertexAttribArray(0);  // Organización de los datos del atributo 0 (pos) del vertex shader
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Indico donde hallar datos de colores dentro del VBO correspondiente
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_col);
+    glEnableVertexAttribArray(1);  // Organización de los datos del atributo 1 (color) del vertex shader
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     // Creo buffer para los indices
     GLuint indexBufferID;
     glGenBuffers(1, &indexBufferID);
@@ -78,6 +95,41 @@ objeto crear_triangulo(void)
     // Enlazo el buffer de indices y lo cargo con los indices
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vertex_indexes), vertex_indexes, GL_STATIC_DRAW);
+
+    glBindVertexArray(0);  //Cerramos VAO con todo listo para ser pintado
+
+    obj.VAO = VAO; obj.Nv = 3;obj.Ni=3;  // Devuelvo objeto VAO + número de vertices en estructura obj
+
+    return obj;
+}
+
+objeto crear_cuadrado(void)
+{
+    objeto obj;
+    GLuint VAO;
+    GLuint buffer_pos, buffer_col;
+
+    GLfloat pos_data[4][3] = { {0.0f, -1.0f+2.5,  1.0f},  // Posición vértice 1
+                               {0.0f,  1.0f+2.5,  1.0f},  // Posición vértice 2
+                               {0.0f,  1.0f+2.5, -1.0f},  // Posición vértice 3
+                               {0.0f, -1.0f+2.5, -1.0f}}; // Posición vértice 4
+
+    GLfloat color_data[4][3] = { {1.0f, 0.0f, 0.0f},  // Color vértice 1
+                                 {0.0f, 1.0f, 0.0f},  // Color vértice 2
+                                 {0.0f, 0.0f, 1.0f},  // Color vértice 3
+                                 {1.0f, 1.0f, 0.0f}}; // Color vértice 4 (amarillo)
+
+    GLubyte vertex_indexes[4] = {0, 1, 2, 3}; // Indices de los vertices
+
+    // Mando posiciones en un VBO
+    glGenBuffers(1, &buffer_pos); glBindBuffer(GL_ARRAY_BUFFER, buffer_pos);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(pos_data), pos_data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Mando colores en otro VBO
+    glGenBuffers(1, &buffer_col); glBindBuffer(GL_ARRAY_BUFFER, buffer_col);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color_data), color_data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     // Creo y enlazo el VAO
     glGenVertexArrays(1, &VAO);	glBindVertexArray(VAO);
@@ -94,13 +146,86 @@ objeto crear_triangulo(void)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+    // Creo buffer para los indices
+    GLuint indexBufferID;
+    glGenBuffers(1, &indexBufferID);
+
+    // Enlazo el buffer de indices y lo cargo con los indices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vertex_indexes), vertex_indexes, GL_STATIC_DRAW);
+
     glBindVertexArray(0);  //Cerramos VAO con todo listo para ser pintado
 
-    obj.VAO = VAO; obj.Nv = 3;obj.Ni=3;  // Devuelvo objeto VAO + número de vertices en estructura obj
+    obj.VAO = VAO; obj.Nv = 4;obj.Ni=6;  // Devuelvo objeto VAO + número de vertices en estructura obj
 
     return obj;
 }
 
+objeto crear_hexagono(void)
+{
+    objeto obj;
+    GLuint VAO;
+    GLuint buffer_pos, buffer_col;
+
+    GLfloat pos_data[7][3] = { {0.0f, 0.0f, 0.0f},  // Posición vértice 0 (centro)
+                               {0.0f,-1.0f, 0.0f},
+                               {0.0f,-0.5f, static_cast<GLfloat>(sqrt(3)/2)},
+                               {0.0f,0.5f, static_cast<GLfloat>(sqrt(3)/2)},
+                               {0.0f,1.0f, 0.0f},
+                               {0.0f,0.5f, static_cast<GLfloat>(-sqrt(3)/2)},
+                               {0.0f,-0.5f, static_cast<GLfloat>(-sqrt(3)/2)}};
+
+    GLfloat color_data[7][3] = { {1.0f, 1.0f, 1.0f},  // Color vértice 0 (blanco)
+                                 {1.0f, 0.0f, 0.0f},  // Color vértice 1 (rojo)
+                                 {1.0f, 1.0f, 0.0f},  // Color vértice 2 (amarillo)
+                                 {0.0f, 1.0f, 0.0f},  // Color vértice 3 (verde)
+                                 {0.0f, 1.0f, 1.0f},  // Color vértice 4 (cian)
+                                 {0.0f, 0.0f, 1.0f},  // Color vértice 5 (azul)
+                                 {1.0f, 0.0f, 1.0f}}; // Color vértice 6 (magenta)
+
+    // Indices de los vertices, repetimos el indice 1 para cerrar la figura
+    GLubyte vertex_indexes[8] = {0, 1, 2, 3, 4, 5, 6, 1};
+
+    //sigue codigo igual que cuadrado...
+    // Mando posiciones en un VBO
+    glGenBuffers(1, &buffer_pos); glBindBuffer(GL_ARRAY_BUFFER, buffer_pos);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(pos_data), pos_data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Mando colores en otro VBO
+    glGenBuffers(1, &buffer_col); glBindBuffer(GL_ARRAY_BUFFER, buffer_col);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color_data), color_data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Creo y enlazo el VAO
+    glGenVertexArrays(1, &VAO);	glBindVertexArray(VAO);
+
+    // Indico donde hallar datos de posiciones dentro del VBO correspondiente
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_pos);
+    glEnableVertexAttribArray(0);  // Organización de los datos del atributo 0 (pos) del vertex shader
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Indico donde hallar datos de colores dentro del VBO correspondiente
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_col);
+    glEnableVertexAttribArray(1);  // Organización de los datos del atributo 1 (color) del vertex shader
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Creo buffer para los indices
+    GLuint indexBufferID;
+    glGenBuffers(1, &indexBufferID);
+
+    // Enlazo el buffer de indices y lo cargo con los indices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vertex_indexes), vertex_indexes, GL_STATIC_DRAW);
+
+    glBindVertexArray(0);  //Cerramos VAO con todo listo para ser pintado
+    //Continua codigo
+    obj.VAO = VAO; obj.Nv = 7; obj.Ni = 8;  // Devuelvo objeto VAO + número de vertices en estructura obj
+
+    return obj;
+}
 
 // Preparaci�n de los datos de los objetos a dibujar, envialarlos a la GPU
 // Compilaci�n programas a ejecutar en la tarjeta gr�fica:  vertex shader, fragment shaders
@@ -111,7 +236,9 @@ void init_scene()
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height); 
     
-	triangulo = crear_triangulo();  // Preparar datos de objeto, mandar a GPU
+	//triangulo = crear_triangulo();  // Preparar datos de objeto, mandar a GPU
+    cuadrado = crear_cuadrado();
+    hexagono = crear_hexagono();
 
 	// Mandar programas a GPU, compilar y crear programa en GPU
 
@@ -163,11 +290,16 @@ void render_scene()
 	transfer_mat4("MVP",P*V*M);
 	
 	// ORDEN de dibujar
-	glBindVertexArray(triangulo.VAO);              // Activamos VAO asociado al objeto
-    glDrawArrays(GL_TRIANGLES, 0, triangulo.Nv);   // Orden de dibujar (Nv vertices)
+	glBindVertexArray(cuadrado.VAO);              // Activamos VAO asociado al objeto
+    // Cambio GL_TRIANGLES por GL_TRIANGLE_FAN en render_scene()
+    glDrawElements(GL_TRIANGLE_FAN,cuadrado.Ni,GL_UNSIGNED_BYTE,0);
 	glBindVertexArray(0);                          // Desconectamos VAO
 
-	////////////////////////////////////////////////////////
+    glBindVertexArray(hexagono.VAO);              // We activate the VAO associated with the object
+    glDrawElements(GL_TRIANGLE_FAN,hexagono.Ni,GL_UNSIGNED_BYTE,0);
+    glBindVertexArray(0);
+
+    ////////////////////////////////////////////////////////
 
 }
 

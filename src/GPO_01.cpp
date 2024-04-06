@@ -103,7 +103,7 @@ void init_scene()
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height); 
     
-	triangulo = crear_triangulo();  // Preparar datos de objeto, mandar a GPU
+	//triangulo = crear_triangulo();  // Preparar datos de objeto, mandar a GPU
 
 	// Mandar programas a GPU, compilar y crear programa en GPU
 
