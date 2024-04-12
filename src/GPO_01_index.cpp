@@ -14,7 +14,7 @@ const char* prac = "OpenGL (GpO)";   // Nombre de la practica (aparecera en el t
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define GLSL(src) "#version 330 core\n" #src
-
+/*
 const char* vertex_prog = GLSL(
 layout(location = 0) in vec3 pos; 
 layout(location = 1) in vec3 color;
@@ -35,7 +35,7 @@ void main()
 	outputColor = col;
  }
 );
-
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////   RENDER CODE AND DATA
@@ -243,6 +243,9 @@ void init_scene()
 	// Mandar programas a GPU, compilar y crear programa en GPU
 
 	// Compilear Shaders
+	char* vertex_prog = leer_codigo_de_fichero("./data/prog.vs");
+	char* fragment_prog = leer_codigo_de_fichero("./data/prog.fs");
+	
 	GLuint VertexShaderID = compilar_shader(vertex_prog, GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = compilar_shader(fragment_prog, GL_FRAGMENT_SHADER);
 
@@ -366,6 +369,50 @@ static void KeyCallback(GLFWwindow* window, int key, int code, int action, int m
 {
 	fprintf(stdout, "Key %d Code %d Act %d Mode %d\n", key, code, action, mode);
 	if (key == GLFW_KEY_ESCAPE) glfwSetWindowShouldClose(window, true);
+
+	if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
+    const char* vertex_prog = leer_codigo_de_fichero("D:/GpO_Project_V0.2/GpO_Project/build/bin/data/prog.vs");
+    const char* fragment_prog = GLSL(
+        in vec3 col;
+    out vec3 outputColor;
+    void main()
+    {
+        if (gl_FragCoord.x > 400) {
+            discard;
+        }
+        else
+        {
+            if (gl_FragCoord.y > 300)
+            {
+                outputColor = vec3(1, 0, 0);
+            }
+            else
+            {
+                outputColor = col;
+            }
+        }
+    }
+    );
+
+    GLuint VertexShaderID = compilar_shader(vertex_prog, GL_VERTEX_SHADER);
+    GLuint FragmentShaderID = compilar_shader(fragment_prog, GL_FRAGMENT_SHADER);
+
+    GLuint new_prog = glCreateProgram();
+    glAttachShader(new_prog, VertexShaderID);
+    glAttachShader(new_prog, FragmentShaderID);
+    glLinkProgram(new_prog);
+
+   
+    glDetachShader(new_prog, VertexShaderID);
+    glDeleteShader(VertexShaderID);
+    glDetachShader(new_prog, FragmentShaderID);
+    glDeleteShader(FragmentShaderID);
+
+    glUseProgram(new_prog);
+
+    prog = new_prog;
+
+}
 }
 
 
